@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap_icons %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <div class="actions">
+            <div class="action-item">
+                <div class="icon-and-text">
+                    {% bs_icon 'plus-circle' %}
+                    <p style="margin-left: .5em;">Add</p>
+                </div>
+            </div>
+
+            <div class="action-item">
+                <div class="icon-and-text">
+                    {% bs_icon 'search' %}
+                    <p style="margin-left: .5em;">Search</p>
+                </div>
+            </div>
+            <div class="action-item">
+                <div class="icon-and-text">
+                    {% bs_icon 'gear' %}
+                    <p style="margin-left: .5em;">Settings</p>
+                </div>
+            </div>
+        </div>
+        <div class="integrations-section">
+            {% for integration in integrations %}
+            <div class="integrations-item">
+                <img src="{{integration.image}}" alt="Avatar" class="image" style="width: 100px; min-height: 100px;">
+                <div class="overlay">
+                    <div class="text" style="text-align: center;">{{ integration.name }}</div>
+                </div>
+            </div> 
+            {% endfor %}
+            
+            
+        </div>
+    </div>
+</body>
+</html>
