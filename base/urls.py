@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('analytics/youtube', views.youtube_analytics, name="youtube_analytics")
 ]
