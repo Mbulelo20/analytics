@@ -1,0 +1,11 @@
+stat {
+    white-space: nowrap;
+    /* Prevents line breaks */
+}
+
+
+.stat h4 {
+    display: inline;
+        /* Keeps elements on the same line */
+    margin-right: 70px;
+}
