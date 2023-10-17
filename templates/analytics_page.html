@@ -44,11 +44,13 @@
             color: red;
         }
         .custom-input {
+            margin-right: 5em;
+            margin-bottom: 2em;
             width: 200px;
             border-top: none;
             border-left:none;
             border-right: none;
-            border-bottom: 0.8px solid #f0f0f0;
+            border-bottom: 0.8px solid #9d9a9a;
         }
     </style>
     
@@ -90,12 +92,13 @@
         <!-- Header -->
         <div class="w3-container" style="margin-top:80px" id="showcase">
             <h1 class="w3-jumbo"><b>analytics for channel: {{channel_name}}</b></h1>
-            <hr style="width:50px;border:1px solid blue" class="w3-round">
             <div class="stat">
-                <h4>Total videos: </h4>
-                <h4>Subscribers: </h4>
-                <h4>Last upload: </h4>
+                <h5>Total videos: </h5>
+                <h5>Subscribers: </h5>
+                <h5>Last upload: </h5>
             </div>
+            <hr style="width:50px;border:1px solid blue" class="w3-round">
+            
         </div>
 
         <!-- Photo grid (modal) -->
@@ -116,7 +119,33 @@
         <div class="w3-row-padding">
             
             <div class="w3-threequarter" id="template-chart" style="margin-top: 2em;">
-               
+                <form action="/analytics/youtube" method="post">
+                    {% csrf_token %}
+                    <div style="align-items: center;">
+                            <input type="date" id="start_date" name="start_date" required class="custom-input" value="{{start}}">
+                            <input type="date" id="end_date" name="end_date" required class="custom-input" value="{{end}}" style="margin-top: 1em;">
+                        
+                        <select id="myDropdown" name="dimension" class="custom-input">
+                            <option value="day" selected>Day</option>
+                            <option value="month">Month</option>
+                        </select>
+                        <input type="submit" value="Submit" style="margin-top: 1em; width: 200px; border-color: blue; border: 3px blue;">
+                    </div>
+                </form>
+            {% if viewMode == 'text' %}
+            {% for month, value in views.items %}
+            <div style="border: .7px solid blue; display: inline-block; text-align: center; margin-bottom: 10px;margin-right: 1em; ">
+                <div class="header" style="padding-left: 10px;padding-right: 10px; color: #d4cece;">
+                    <p>{{ month }}</p>
+                </div>
+                <hr style="width:60%;border:.5px solid blue; display: inline-block;" class="w3-round">
+                <div class="value">
+                    <h4 style="padding-bottom: 17px;">{{ value }}</h4>
+                </div>
+            </div>
+            
+            {% endfor %}
+            {% endif %}
                 <canvas id="myChart" width="600" height="250"></canvas>
 
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -146,16 +175,9 @@
                 </script>
 
             </div>
-            <div class="w3-quarter" style="margin-top: 3em;">
-                <form action="/test" method="post">
-                    {% csrf_token %}
-                    <!-- <label for="date">Select a Date:</label> -->
-                    <input type="date" id="start_date" name="start_date" required class="custom-input">
+            <!-- <div class="w3-quarter" style="margin-top: 3em;">
                 
-                    <input type="date" id="end_date" name="end_date" required class="custom-input" style="margin-top: 1em;">
-                    <input type="submit" value="Submit" style="margin-top: 1em; width: 200px; border-color: blue; border: 3px blue;">
-                </form>
-            </div>
+            </div> -->
             
         </div>
 

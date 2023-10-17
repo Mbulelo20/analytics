@@ -18,6 +18,7 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 
 global aa
 aa = None
+
 # Initialize the YouTube Analytics and Reporting service
 def get_authenticated_service():
     creds = None
@@ -55,20 +56,19 @@ def get_channel_name(youtube_data):
 
     return channel_name
 
-def channel():
-    return build('youtube', 'v3', credentials=aa)
+def date_range(start, end):
+    return start, end
 
 
 # Fetch basic channel statistics
-def get_channel_statistics(youtube_analytics, start_date, end_date):
-    myvideos = get_all_videos_for_channel(youtube_analytics["yt_data"])
+def get_channel_statistics(youtube_analytics, start, end, dimension):
 
-    response = youtube_analytics['yt_analytics'].reports().query(
+    response = youtube_analytics.reports().query(
         ids='channel==MINE',
-        startDate=start_date,
-        endDate=end_date,
+        startDate=start,
+        endDate=end,
         metrics='views,comments,likes,dislikes,shares,subscribersGained,subscribersLost',
-        dimensions='day'
+        dimensions=dimension
     ).execute()
 
     return response
@@ -77,7 +77,6 @@ def get_channel_statistics(youtube_analytics, start_date, end_date):
 def get_all_videos_for_channel(youtube_data):
     videos = []
     next_page_token = None
-
     while True:
         # Use the search().list() method to fetch videos for a specific channel
         search_response = youtube_data.search().list(
@@ -97,14 +96,26 @@ def get_all_videos_for_channel(youtube_data):
 
         if not next_page_token:
             break
-
+    
     return videos
 
+def youtubeData(start, end, dimension):
+    
+    youtube_service = get_authenticated_service()
+    name = get_channel_name(youtube_service["yt_data"])
+    stats = get_channel_statistics(youtube_service["yt_analytics"], start, end, dimension)
+    videos = get_all_videos_for_channel(youtube_service["yt_data"])
 
+    data = {
+        "channel_name": name,
+        "stats": stats,
+        "videos": videos
+    }
+
+    return data
 
 def main():
-    youtube_analytics = get_authenticated_service()
-    get_channel_statistics(youtube_analytics["yt_analytics"])
+    print(youtubeData("2023-06-01","2023-09-01"))
 
 if __name__ == '__main__':
     main()
