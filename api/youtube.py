@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
-
+import json
 
 # Your API credentials file (JSON) obtained from the Google Developer Console
 CLIENT_SECRETS_FILE = 'client_secret.json'
@@ -111,6 +111,12 @@ def youtubeData(start, end, dimension):
         "stats": stats,
         "videos": videos
     }
+
+    file_path = "bulkdata.json"
+
+    # Write the data to the JSON file
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file)
 
     return data
 
