@@ -25,6 +25,7 @@ def youtube_analytics(request):
     end = date.today()
     start = date(end.year, end.month, 1).strftime('%Y-%m-%d')
     dimension="day"
+    
     if request.method == 'POST':
         print(request.POST.get('metric'))
 
@@ -49,13 +50,14 @@ def youtube_analytics(request):
     results = youtubeData["stats"]
     for row in results.get('rows', []):
         data.append(row)
-    print(data)
+    # print(data)
     # print(data) views,comments,likes,dislikes,shares,subscribersGained,subscribersLost'
     metrics = ["views","comments","likes","dislikes","shares","subscribersGained","subscribersLost" ]
     index = [0,1,2,3,4,5,6]
     
     # metrics='views,comments,likes,dislikes,shares,subscribersGained,subscribersLost',
     n = metrics.index(metric)+1
+    print(metric, "-",n)
     for i in range(len(data)):
         year = datetime.strptime(data[i][0], "%Y-%m-%d").strftime("%b %d")
         value = data[i][n]  # Replace this with the actual value for the metric
