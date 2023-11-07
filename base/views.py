@@ -23,11 +23,11 @@ def youtube_analytics(request):
     viewObject = {}
     metric = 'views'
     end = date.today()
+    print("***************")
     start = date(end.year, end.month, 1).strftime('%Y-%m-%d')
     dimension="day"
-    
+    display = "Text"
     if request.method == 'POST':
-        print(request.POST.get('metric'))
 
         if(request.POST.get('metric')):
             metric = request.POST.get('metric')
@@ -38,7 +38,8 @@ def youtube_analytics(request):
             end = request.POST.get('end_date')
         if(request.POST.get('dimension')):
             dimension = request.POST.get('dimension')
-        
+        if(request.POST.get('display')):
+            display = request.POST.get('display')
     youtubeData = youtube.youtubeData(start,end,dimension)
         
 
@@ -57,13 +58,17 @@ def youtube_analytics(request):
     
     # metrics='views,comments,likes,dislikes,shares,subscribersGained,subscribersLost',
     n = metrics.index(metric)+1
-    print(metric, "-",n)
     for i in range(len(data)):
         year = datetime.strptime(data[i][0], "%Y-%m-%d").strftime("%b %d")
         value = data[i][n]  # Replace this with the actual value for the metric
         viewObject[year] = value
-
-    context = {"data": data,"channel_name":name, "metrics": metrics, "viewMode":"text", "views": viewObject, "start": start, "end":end, "metric_name":metric}
+    graphData = []
+   
+    for i,j in viewObject.items():
+        data = {"date":i, "views":j}
+        graphData.append(data)
+    print(graphData)
+    context = {"data": data,"channel_name":name, "metrics": metrics, "viewMode":display, "views": viewObject,"graphData": graphData, "start": start, "end":end, "metric_name":metric}
     return render(request, "analytics_page.html", context)
 
 def test(request):

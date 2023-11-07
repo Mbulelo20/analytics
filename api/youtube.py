@@ -62,11 +62,12 @@ def date_range(start, end):
 
 # Fetch basic channel statistics
 def get_channel_statistics(youtube_analytics, start, end, dimension):
-
+    print(start)
+    print(end)
     response = youtube_analytics.reports().query(
         ids='channel==MINE',
         startDate=start,
-        endDate=end,
+        endDate='2023-11-07',
         metrics='views,comments,likes,dislikes,shares,subscribersGained,subscribersLost',
         dimensions=dimension
     ).execute()
@@ -120,8 +121,8 @@ def youtubeData(start, end, dimension):
 
     return data
 
-def main():
-    print(youtubeData("2023-06-01","2023-09-01"))
+# def main():
+#     print(youtubeData("2023-06-01","2023-09-01"))
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

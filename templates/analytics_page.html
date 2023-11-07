@@ -10,6 +10,8 @@
 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body,
         h1,
@@ -46,7 +48,8 @@
         .custom-input {
             margin-right: 2em;
             margin-bottom: 2em;
-            width: 190px;
+            font-size: 10px;
+            width: 125px;
             border-top: none;
             border-left:none;
             border-right: none;
@@ -94,9 +97,9 @@
     <div class="w3-main" style="margin-left:340px;margin-right:40px">
 
         <!-- Header -->
-        <div class="w3-container" style="margin-top:80px" id="showcase">
-            <h1 class="w3-jumbo"><b>analytics for channel: {{channel_name}}</b></h1>
-            <div class="stat">
+        <div class="w3-container" style="margin-top:45px" id="showcase">
+            <h1 style="font-size: 34px;"><b>analytics for channel: {{channel_name}}</b></h1>
+            <div class="stat" style="font-size: 5px;">
                 <h5>Total videos: </h5>
                 <h5>Subscribers: </h5>
                 <h5>Last upload: </h5>
@@ -105,90 +108,86 @@
             
         </div>
 
-        <!-- Photo grid (modal) -->
-        <div class="w3-row-padding">
-            
-            <div class="w3-half" style="margin-top: 2em;">
-                
-            </div>
+     
+        <div class="w3-row w3-auto">
+            {{viewMode}}
+            <div class="w3-twothird">
 
-            <!-- <div class="w3-half">
-                <img src="/w3images/atrium.jpg" style="width:100%" onclick="onClick(this)" alt="Windows for the atrium">
-                <img src="/w3images/bedroom.jpg" style="width:100%" onclick="onClick(this)"
-                    alt="Bedroom and office in one space">
-                <img src="/w3images/livingroom2.jpg" style="width:100%" onclick="onClick(this)"
-                    alt="Scandinavian design">
-            </div> -->
-        </div>
-        <div class="w3-row-padding">
-            
-            <div class="" id="template-chart" style="margin-top: 2em;">
-                
-                <div style="display: flex; align-items: center;">
-                    <h6 class="w3-jumbo" style="font-size: 10px;">{{metric_name}}</h5>
+                {% if viewMode == 'text' %}
+                    {% for month, value in views.items %}
+                        <div style="width:100px; border: .1px solid blue; display: inline-block; text-align: center; margin-bottom: 10px;margin-right: 1em; ">
+                            <div class="header" style="padding-left: 12px;padding-right: 12px;">
+                                <p>{{ month }}</p>
+                            </div>
+                            <hr style="width:60%;border:.5px solid blue; display: inline-block;" class="w3-round">
+                            <div class="value">
+                                <h4 style="padding-bottom: 17px;">{{ value }}</h4>
+                            </div>
+                        </div>
                     
-                    <form action="/analytics/youtube" method="post" style="margin-left: 10px;">
-                        {% csrf_token %}
-                        <input type="hidden" id="metric" name="metric" value="{{metric_name}}">
-
-                        <input type="date" id="start_date" name="start_date" class="custom-input" value="{{start}}">
-                        <input type="date" id="end_date" name="end_date" class="custom-input" style="margin-top: 1em;" value="{{end}}">
-                        
-                        <select id="myDropdown" name="dimension" class="custom-input">
-                            <option value="day" selected>Day</option>
-                            <option value="month">Month</option>
-                        </select>
-                        <input type="submit" value="Submit" style="margin-top: 1em; width: 200px; border-color: blue; border: 3px blue;">
-                    </form>
+                    {% endfor %}
+                {% endif %}
+                {% if viewMode == 'graph' %}
+                {{views.items}}
+                <div style="width: 400px; height: 400px;">
+                    <canvas id="myChart"></canvas>
                 </div>
-            {% if viewMode == 'text' %}
-                {% for month, value in views.items %}
-                    <div class="w3-threequarter" style="border: .7px solid blue; display: inline-block; text-align: center; margin-bottom: 10px;margin-right: 1em; ">
-                        <div class="header" style="padding-left: 12px;padding-right: 12px; color: #d4cece;">
-                            <p>{{ month }}</p>
-                        </div>
-                        <hr style="width:60%;border:.5px solid blue; display: inline-block;" class="w3-round">
-                        <div class="value">
-                            <h4 style="padding-bottom: 17px;">{{ value }}</h4>
-                        </div>
-                    </div>
-                
-                {% endfor %}
-            {% endif %}
-                <canvas id="myChart" width="600" height="250"></canvas>
-
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            
                 <script>
-                    const date_range = JSON.parse('{{ date_range|safe }}')
+                    // Extract the data from the data_set
+                    const data_set = '{{ graphData|escapejs }}';
+                    console.log(data_set)
+                    const labels = data_set.map(item => Object.keys(item)[0]);
+                    const values = data_set.map(item => Object.values(item)[0]);
+            
                     const ctx = document.getElementById('myChart').getContext('2d');
                     const myChart = new Chart(ctx, {
-                        type: 'line',
+                        type: 'bar',
                         data: {
-                            labels: date_range,
+                            labels: labels,
                             datasets: [{
-                                label: "Viewers gained per month",
-                                data: [4,2,7,5,14,12,13,11,11,10,12,14],
+                                label: 'Data Set',
+                                data: values,
                                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1
-                                }]
-                            },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
                             }
                         }
-                    }
-                  });
+                    });
                 </script>
-
-            </div>
-            <!-- <div class="w3-quarter" style="margin-top: 3em;">
-                
-            </div> -->
             
-        </div>
+                {% endif %}
+            </div>
+            <div class="w3-third">
+                <!-- <h6 style="font-size: 24px; margin: 0;">{{metric_name}}</h6> Use margin: 0; to remove any default margin -->
+                    
+                    <form action="/analytics/youtube" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="metric" name="metric" value="{{metric_name}}">
+                        
+                        <input style="display: inline;" type="date" id="start_date" name="start_date" class="custom-input" value="{{start}}">
+                        <input style="display: inline;"  type="date" id="end_date" name="end_date" class="custom-input" value="{{end}}">
+                        
+                        <select id="myDropdown" name="dimension" class="custom-input">
+                            <option value="day" selected>Daily</option>
+                            <option value="month">Monthly</option>
+                        </select>
+                        <select id="myDropdown" name="display" class="custom-input">
+                            <option value="graph" selected>Graph</option>
+                            <option value="text">Text</option>
+                        </select>
+                        <input type="submit" value="Submit" style="width: 100%; border-color: blue; border: 3px blue;">
+                    </form>
+                </div>
+            </div>
+            
 
         <!-- Modal for full size images on click-->
         <div id="modal01" class="w3-modal w3-black" style="padding-top:0" onclick="this.style.display='none'">

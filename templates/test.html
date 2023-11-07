@@ -4,14 +4,39 @@
     <title>Hidden Fields Form</title>
 </head>
 <body>
-    <form id="hiddenForm" action="submit_action.php" method="post">
-        <!-- Hidden Input Fields -->
-        <input type="hidden" name="field1" value="Hidden Field 1 Value">
-        <input type="hidden" name="field2" value="Hidden Field 2 Value">
-        <input type="hidden" name="field3" value="Hidden Field 3 Value">
-        
-        <!-- Button to Submit the Form -->
-        <input type="submit" value="Submit">
-    </form>
+    {% for month, value in items %}
+    <div style="display: flex; align-items: center;">
+        <div class="" id="template-chart-{{ month }}" style="margin-top: 1em;">
+            <canvas id="myChart-{{ month }}" width="600" height="250"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                const date_range = JSON.parse('{{ date_range|safe }}');
+                const ctx = document.getElementById('myChart-{{ month }}').getContext('2d');
+                const data = [4, 2, 7, 5, 14, 12, 13, 11, 11, 10, 12, 14]; // Replace with your dynamic data based on 'value'
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: date_range,
+                        datasets: [{
+                            label: "Viewers gained per month",
+                            data: data, // Use the dynamic data here
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+{% endfor %}
+
 </body>
 </html>
